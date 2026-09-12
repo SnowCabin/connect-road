@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>中興新村路網拼圖 (光榮里・花園城鎮)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+      background: #0c0a09;
+      color: #f5f5f4;
+    }
+    #game-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background: linear-gradient(to bottom, #1c1917, #0c0a09, #1c1917);
+    }
+    header {
+      background: rgba(28, 25, 23, 0.95);
+      border-bottom: 1px solid rgba(180, 83, 9, 0.35);
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .avatar-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .brand-text h1 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fef08a;
+      line-height: 1.2;
+    }
+    .brand-text p {
+      font-size: 11px;
+      color: #a8a29e;
+    }
+    .stats-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .pill {
+      background: rgba(41, 37, 36, 0.85);
+      border: 1px solid #44403c;
+      padding: 4px 11px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #34d399;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+    .pill-lock {
+      background: rgba(6, 78, 59, 0.85);
+      border: 1px solid rgba(16, 185, 129, 0.6);
+      color: #86efac;
+    }
+    .btn-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    button.btn {
+      background: #292524;
+      border: 1px solid #44403c;
+      color: #e7e5e4;
+      padding: 5px 11px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+    button.btn:hover {
+      background: #44403c;
+      color: #fff;
+    }
+    button.btn-hint-active {
+      background: rgba(16, 185, 129, 0.25) !important;
+      border-color: #10b981 !important;
+      color: #6ee7b7 !important;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+    }
+    button.btn-help {
+      background: rgba(120, 53, 15, 0.4);
+      border-color: rgba(217, 119, 6, 0.5);
+      color: #fde68a;
+    }
+    button.btn-help:hover {
+      background: rgba(180, 83, 9, 0.65);
+      color: #fff;
+    }
+    main {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 10px;
+      background-image: radial-gradient(#d97706 1px, transparent 1px);
+      background-size: 20px 20px;
+      background-color: #0c0a09;
+    }
+    .canvas-card {
+      position: relative;
+      padding: 8px;
+      background: rgba(69, 26, 3, 0.25);
+      border: 3.5px solid rgba(180, 83, 9, 0.55);
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    canvas {
+      border-radius: 14px;
+      display: block;
+      touch-action: none;
+      cursor: pointer;
+      background: #5e8947;
+    }
+    footer {
+      background: rgba(12, 10, 9, 0.9);
+      border-top: 1px solid #292524;
+      padding: 6px 14px;
+      font-size: 11px;
+      color: #a8a29e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      text-align: center;
+    }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-card {
+      background: #1c1917;
+      border: 2px solid #b45309;
+      border-radius: 20px;
+      padding: 22px;
+      max-width: 480px;
+      width: 100%;
+      color: #f5f5f4;
+      position: relative;
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.8);
+      transform: scale(0.92);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      max-height: 94vh;
+      overflow-y: auto;
+    }
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: none;
+      border: none;
+      color: #a8a29e;
+      font-size: 22px;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    .modal-close:hover {
+      color: #fff;
+      background: #292524;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .modal-header h3 {
+      font-size: 18px;
+      color: #fde68a;
+    }
+    .rule-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .rule-icon {
+      font-size: 16px;
+      margin-top: 1px;
+    }
+    .btn-action {
+      width: 100%;
+      padding: 11px;
+      background: #b45309;
+      border: none;
+      border-radius: 12px;
+      color: #0c0a09;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: background 0.15s;
+    }
+    .btn-action:hover {
+      background: #d97706;
+    }
+    .victory-box {
+      text-align: center;
+    }
+    .victory-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fde047;
+      margin-bottom: 4px;
+      text-shadow: 0 0 12px rgba(234, 179, 8, 0.4);
+    }
+    .victory-subtitle {
+      font-size: 12px;
+      color: #a8a29e;
+      margin-bottom: 12px;
+    }
+    .card-display-wrap {
+      background: #0c0a09;
+      border: 2px solid #b45309;
+      border-radius: 14px;
+      padding: 8px;
+      margin: 10px auto;
+      max-width: 250px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-display-wrap svg, .card-display-wrap img {
+      width: 100%;
+      height: auto;
+      max-height: 310px;
+      display: block;
+      border-radius: 8px;
+    }
+    .popworld-alert {
+      background: rgba(120, 53, 15, 0.4);
+      border: 1px solid rgba(245, 158, 11, 0.6);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-top: 12px;
+      font-size: 13px;
+      color: #fef08a;
+      line-height: 1.5;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+
+<div id="game-container">
+  <!-- 頂部資訊列 -->
+  <header>
+    <div class="brand">
+      <div class="avatar-icon">👴</div>
+      <div class="brand-text">
+        <h1>中興新村路網拼圖</h1>
+        <p>光榮里・花園城鎮</p>
+      </div>
+    </div>
+
+    <div class="stats-group">
+      <div class="pill" title="路網連通進度">
+        <div class="pulse-dot"></div>
+        <span style="color:#a8a29e;">路網:</span>
+        <strong id="stat-connected" style="color:#6ee7b7;">0/24</strong>
+        <span id="stat-percent" style="font-size:10px; color:#78716c;">(0%)</span>
+      </div>
+
+      <div class="pill">
+        <span style="color:#a8a29e;">步數:</span>
+        <strong id="stat-moves" style="color:#fde047;">0</strong>
+      </div>
+
+      <div id="stat-hint-pill" class="pill pill-lock" style="display:none;">
+        <span>🔒 已鎖定:</span>
+        <strong id="stat-locked-count">0/24</strong>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button id="btn-hint" class="btn" title="開啟提示：鎖定並標示所有已就位的正確圖塊">
+        💡 <span id="hint-text">提示</span>
+      </button>
+      <button id="btn-sound" class="btn" title="切換音效">🔊</button>
+      <button id="btn-reset" class="btn" title="重新打亂地圖">🔄 重置</button>
+      <button id="btn-help" class="btn btn-help" title="查看遊戲規則">❓ 說明</button>
+    </div>
+  </header>
+
+  <!-- 遊戲畫布區 (直向 6 列 × 4 行) -->
+  <main id="canvas-wrapper">
+    <div class="canvas-card">
+      <canvas id="gameCanvas" width="360" height="540"></canvas>
+    </div>
+  </main>
+
+  <!-- 底部說明列 -->
+  <footer>
+    <span>💡 點擊圖塊旋轉街道，讓全村24格道路連通且無死路，即可驅散迷霧！</span>
+  </footer>
+</div>
+
+<!-- 遊戲規則彈窗 -->
+<div id="modal-help" class="modal-overlay">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal('modal-help')">&times;</button>
+    <div class="modal-header">
+      <div class="avatar-icon">🧭</div>
+      <div>
+        <h3>中興新村路網拼圖・遊戲規則</h3>
+        <p style="font-size:11px; color:#a8a29e;">直向 6 列 × 4 行・接通路網驅散迷霧</p>
+      </div>
+    </div>
+
+    <div style="background:rgba(12,10,9,0.7); padding:14px; border-radius:12px; border:1px solid #292524;">
+      <div class="rule-item">
+        <div class="rule-icon">🔄</div>
+        <div><strong style="color:#fde047;">旋轉街道圖塊：</strong>點擊任意地塊即可順時針旋轉 90 度，調整道路走向。</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-icon">👴</div>
+        <div><strong style="color:#fde047;">固定起點：</strong>左上角白髮老爺爺為核心起點，不可旋轉。</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-icon">⭕</div>
+        <div><strong style="color:#5eead4;">特色囊底路：</strong>中興新村經典規劃！僅單向連通，端點設有圓圈迴車道，端點處無需再對接其他道路。</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-icon">💡</div>
+        <div><strong style="color:#fde047;">提示功能：</strong>點擊右上角「提示」，系統會自動<strong>鎖定並標示所有已轉到正確方向的圖塊</strong>，避免誤觸轉動，助您專注解謎。</div>
+      </div>
+      <div class="rule-item" style="margin-bottom:0;">
+        <div class="rule-icon">🏆</div>
+        <div><strong style="color:#86efac;">通關與 Popworld 辨識：</strong>當全村 24 格道路完全連通且<strong>無任何死路</strong>時，迷霧將全數驅散，並現身<strong>「地雷復」</strong>卦靈圖卡！開啟 Popworld 點「輸入答案」，將鏡頭對準圖卡辨識即可過關。</div>
+      </div>
+    </div>
+
+    <button class="btn-action" onclick="closeModal('modal-help')">我瞭解了，開始挑戰！</button>
+  </div>
+</div>
+
+<!-- 老爺爺對話彈窗 -->
+<div id="modal-grandpa" class="modal-overlay">
+  <div class="modal-card" style="max-width:380px; text-align:center;">
+    <button class="modal-close" onclick="closeModal('modal-grandpa')">&times;</button>
+    <div style="font-size:38px; margin-bottom:8px;">👴</div>
+    <h3 style="color:#fde047; margin-bottom:6px;">村長老爺爺的祝福</h3>
+    <p style="font-size:13px; color:#d6d3d1; line-height:1.6; margin-bottom:14px;">
+      「歡迎來到中興新村！這片花園聚落以囊底路與綠意林蔭聞名。我這裡就是起點，請幫忙把迷霧中的道路接通，喚醒古老的卦靈吧！」
+    </p>
+    <button class="btn-action" onclick="closeModal('modal-grandpa')">繼續修復路網</button>
+  </div>
+</div>
+
+<!-- ================================================================= -->
+<!-- 【過關畫面段落：地雷復 卦靈圖片與 Popworld 辨識區塊】 -->
+<!-- 若您未來需要替換為自訂圖片 (如 <img src="...">)，請直接修改此段落內部的 <svg> 即可 -->
+<!-- ================================================================= -->
+<div id="modal-victory" class="modal-overlay">
+  <div class="modal-card victory-box">
+    <div class="victory-title">✨ 成功驅散迷霧，卦靈現身！ ✨</div>
+    <div class="victory-subtitle" id="victory-stats">您成功連通中興新村所有路網！</div>
+
+    <!-- ▼▼▼【地雷復 圖片開始】▼▼▼ -->
+    <!-- 說明：此處為過關時彈出的「地雷復」圖卡（含北字羅盤、地雷復卦象、神獸圖騰、地雷復金印） -->
+    <div class="card-display-wrap">
+      <!-- 提示：若您想換成外部圖片網址，可將整個 <svg> 替換成： -->
+      <!-- <img src="您的圖片網址.jpg" alt="地雷復" style="width:100%; border-radius:8px;"> -->
+      <svg id="victory-svg-card" viewBox="0 0 595 842" width="100%" height="auto">
+        <defs>
+          <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#d4a34b" />
+            <stop offset="50%" stop-color="#b8832e" />
+            <stop offset="100%" stop-color="#9a6b20" />
+          </linearGradient>
+          <linearGradient id="sunburstGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#fde047" />
+            <stop offset="60%" stop-color="#eab308" />
+            <stop offset="100%" stop-color="#ca8a04" />
+          </linearGradient>
+          <radialGradient id="auraGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#fef08a" stop-opacity="0.6" />
+            <stop offset="70%" stop-color="#eab308" stop-opacity="0.15" />
+            <stop offset="100%" stop-color="#ca8a04" stop-opacity="0" />
+          </radialGradient>
+          <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.15" />
+          </filter>
+        </defs>
+
+        <!-- 卡片基底 -->
+        <rect width="595" height="842" fill="#ffffff" rx="14" />
+        
+        <!-- 金色邊框裝飾 -->
+        <g stroke="url(#goldGrad)" fill="none">
+          <rect x="50" y="50" width="495" height="742" stroke-width="3" />
+          <rect x="60" y="60" width="475" height="722" stroke-width="1.5" />
+          <rect x="45" y="735" width="10" height="10" fill="#b8832e" />
+          <rect x="540" y="735" width="10" height="10" fill="#b8832e" />
+          <line x1="50" y1="740" x2="545" y2="740" stroke-width="2" />
+          <rect x="80" y="130" width="435" height="575" stroke-width="2.5" />
+        </g>
+
+        <!-- 左上圓徽：北字羅盤 -->
+        <g transform="translate(95, 90)">
+          <circle cx="0" cy="0" r="36" fill="url(#goldGrad)" stroke="#ffffff" stroke-width="2" />
+          <circle cx="0" cy="0" r="32" fill="none" stroke="#ffffff" stroke-width="1.2" />
+          <g fill="#ffffff">
+            <polygon points="0,-26 3,-6 0,0 -3,-6" />
+            <polygon points="0,12 2,4 0,0 -2,4" />
+            <polygon points="18,0 4,2 0,0 4,-2" />
+            <polygon points="-18,0 -4,2 0,0 -4,-2" />
+          </g>
+          <text x="0" y="24" text-anchor="middle" font-family="'Noto Serif TC', serif" font-weight="bold" font-size="13" fill="#ffffff">北</text>
+        </g>
+
+        <!-- 右上圓徽：地雷復卦象 (上坤下震：五陰下一陽) -->
+        <g transform="translate(500, 90)">
+          <circle cx="0" cy="0" r="36" fill="url(#goldGrad)" stroke="#ffffff" stroke-width="2" />
+          <circle cx="0" cy="0" r="32" fill="none" stroke="#ffffff" stroke-width="1.2" />
+          <!-- 六爻 (由上到下) -->
+          <line x1="-20" y1="-20" x2="-4" y2="-20" stroke="#ffffff" stroke-width="4.2" stroke-linecap="round" />
+          <line x1="4" y1="-20" x2="20" y2="-20" stroke="#ffffff" stroke-width="4.2" stroke-linecap="round" />
+          <line x1="-20" y1="-12" x2="-4" y2="-12" stroke="#ffffff" stroke-width="4.2" stroke-linecap="round" />
+          <line x1="4" y1="-12" x2="20" y2="-12" stroke="#ffffff" stroke-width="4.2" stroke-linecap="round" />
+          <line x1="-20" y1="-4" x2="-4" y2="-4" stroke="#ffffff" stroke-width="4.2" stroke-linecap="round" />
+          <line x1="4" y1="-4" x2="20" y2="-4" stroke="#ffffff" stroke-width="4.2" stroke-linecap="round" />
+          <line x1="-20" y1="4" x2="-4" y2="4" stroke="#ffffff" stroke-width="4.2" stroke-linecap="round" />
+          <line x1="4" y1="4" x2="20" y2="4" stroke="#ffffff" stroke-width="4.2" stroke-linecap="round" />
+          <line x1="-20" y1="12" x2="-4" y2="12" stroke="#ffffff" stroke-width="4.2" stroke-linecap="round" />
+          <line x1="4" y1="12" x2="20" y2="12" stroke="#ffffff" stroke-width="4.2" stroke-linecap="round" />
+          <!-- 初爻陽線 (實線) -->
+          <line x1="-20" y1="20" x2="20" y2="20" stroke="#ffffff" stroke-width="4.2" stroke-linecap="round" />
+        </g>
+
+        <!-- 中央神獸主圖：雷澤神獸 (地雷復守護靈) -->
+        <g transform="translate(297, 420)">
+          <circle cx="0" cy="-20" r="140" fill="url(#auraGlow)" />
+          
+          <!-- 軀體石雕 -->
+          <path d="M 60,70 Q 95,80 120,30 Q 130,10 125,40 Q 115,90 70,110 Z" fill="#b3aba0" stroke="#4a4238" stroke-width="2.5" />
+          <path d="M -70,20 L -90,80 L -80,170 L -30,190 L 0,195 L 30,190 L 80,170 L 85,75 L 65,20 Z" fill="#cdc6ba" stroke="#4a4238" stroke-width="2.5" />
+
+          <!-- 前爪 -->
+          <path d="M -70,155 L -75,195 L -45,200 L -15,195 L -20,155 Z" fill="#b9b1a5" stroke="#4a4238" stroke-width="2.5" />
+          <path d="M 15,155 L 15,195 L 45,200 L 75,195 L 70,155 Z" fill="#c4bcb0" stroke="#4a4238" stroke-width="2.5" />
+
+          <!-- 耳部 -->
+          <path d="M -75,-90 L -70,-175 L -40,-190 L -25,-130 Z" fill="#cac2b7" stroke="#4a4238" stroke-width="2.5" />
+          <path d="M 75,-90 L 70,-175 L 40,-190 L 25,-130 Z" fill="#d8d1c6" stroke="#4a4238" stroke-width="2.5" />
+
+          <!-- 面部棱角 -->
+          <path d="M -70,-90 L -25,-135 L 25,-135 L 70,-90 L 60,-25 L 0,15 L -60,-25 Z" fill="#dbd5cb" stroke="#4a4238" stroke-width="2.5" />
+          <polygon points="-25,-135 0,-145 25,-135 0,-95" fill="#e5dfd6" stroke="#4a4238" stroke-width="1.5" />
+          <polygon points="0,-95 -25,-35 0,-20 25,-35" fill="#cdc6ba" stroke="#4a4238" stroke-width="2" />
+          <polygon points="-14,-32 0,-40 14,-32 8,-22 -8,-22" fill="#4a4238" />
+
+          <!-- 金黃電光眼眸 -->
+          <polygon points="-48,-65 -28,-75 -22,-60 -38,-52" fill="#ca8a04" stroke="#4a4238" stroke-width="1.5" />
+          <circle cx="-33" cy="-64" r="5" fill="#1e1b18" />
+          <circle cx="-35" cy="-66" r="1.8" fill="#ffffff" />
+
+          <polygon points="48,-65 28,-75 22,-60 38,-52" fill="#ca8a04" stroke="#4a4238" stroke-width="1.5" />
+          <circle cx="33" cy="-64" r="5" fill="#1e1b18" />
+          <circle cx="31" cy="-66" r="1.8" fill="#ffffff" />
+
+          <!-- 金黃日輪頸圈 -->
+          <polygon points="0,-25 28,-13 75,-58 55,0 145,12 68,38 115,85 45,62 50,125 15,72 0,130 -15,72 -50,125 -45,62 -115,85 -68,38 -145,12 -55,0 -75,-58 -28,-13" fill="url(#sunburstGrad)" stroke="#9a6b20" stroke-width="2.5" />
+        </g>
+
+        <!-- 底部菱形標題：「地」「雷」「復」 -->
+        <g transform="translate(297, 740)">
+          <!-- 地 -->
+          <g transform="translate(-75, 0)">
+            <rect x="-28" y="-28" width="56" height="56" rx="4" transform="rotate(45)" fill="url(#goldGrad)" stroke="#ffffff" stroke-width="2" />
+            <text x="0" y="10" text-anchor="middle" font-family="'Noto Serif TC', serif" font-weight="900" font-size="28" fill="#ffffff">地</text>
+          </g>
+          <!-- 雷 -->
+          <g transform="translate(0, 0)">
+            <rect x="-30" y="-30" width="60" height="60" rx="4" transform="rotate(45)" fill="url(#goldGrad)" stroke="#ffffff" stroke-width="2.2" />
+            <text x="0" y="11" text-anchor="middle" font-family="'Noto Serif TC', serif" font-weight="900" font-size="30" fill="#ffffff">雷</text>
+          </g>
+          <!-- 復 -->
+          <g transform="translate(75, 0)">
+            <rect x="-28" y="-28" width="56" height="56" rx="4" transform="rotate(45)" fill="url(#goldGrad)" stroke="#ffffff" stroke-width="2" />
+            <text x="0" y="10" text-anchor="middle" font-family="'Noto Serif TC', serif" font-weight="900" font-size="28" fill="#ffffff">復</text>
+          </g>
+        </g>
+      </svg>
+    </div>
+    <!-- ▲▲▲【地雷復 圖片結束】▲▲▲ -->
+
+    <!-- Popworld 提示文字 -->
+    <div class="popworld-alert">
+      📱 <strong>過關指引：</strong><br>
+      請開啟popworld點「輸入答案」按鈕後，將鏡頭對準這個圖片，辨識成功，即可過關。
+    </div>
+
+    <button class="btn-action" onclick="resetGame(); closeModal('modal-victory');">再玩一次</button>
+  </div>
+</div>
+
+<!-- 遊戲邏輯與繪圖引擎 -->
+<script>
+/**
+ * 中興新村 6*4 街道地圖 (6 列 x 4 行，直向排列，共 24 格)
+ * 基礎四向開口: [北, 東, 南, 西] (1 為有路，0 為無路)
+ */
+const ROWS = 6;
+const COLS = 4;
+let TILE_SIZE = 86;
+
+const BASE_GRID_EXITS = [
+  // Row 0: 老爺爺起點在 (0,0)
+  [ [0,1,1,0], [0,1,0,1], [0,1,1,1], [0,0,1,1] ],
+  // Row 1: (1,3) 為囊底路
+  [ [1,1,0,0], [0,1,1,1], [1,0,1,1], [1,0,0,0] ],
+  // Row 2: (2,0) 為囊底路
+  [ [0,0,1,0], [1,1,1,0], [1,1,0,1], [0,0,1,1] ],
+  // Row 3: (3,3) 為囊底路
+  [ [1,1,0,0], [1,1,1,1], [0,0,1,1], [1,0,0,0] ],
+  // Row 4: (4,0) 為囊底路
+  [ [0,0,1,0], [1,1,0,0], [1,1,1,1], [0,0,1,1] ],
+  // Row 5: (5,3) 為囊底路
+  [ [1,1,0,0], [0,1,0,1], [1,0,0,1], [1,0,0,0] ]
+];
+
+const SCENERY_TYPES = [
+  ['grandpa', 'avenue', 'houses_cluster', 'park'],
+  ['houses_cluster', 'lane', 'single_house', 'cul_de_sac'],
+  ['cul_de_sac', 'avenue', 'houses_cluster', 'park'],
+  ['single_house', 'lane', 'houses_cluster', 'cul_de_sac'],
+  ['cul_de_sac', 'houses_cluster', 'avenue', 'park'],
+  ['houses_cluster', 'avenue', 'single_house', 'cul_de_sac']
+];
+
+let grid = [];
+let moveCount = 0;
+let showHints = false;
+let soundEnabled = true;
+let isWon = false;
+let hoveredCoord = null;
+let animAngles = {};
+
+// Web Audio API
+let audioCtx = null;
+function initAudio() {
+  if (!audioCtx) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) audioCtx = new AudioContext();
+  }
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+function playTone(freq, dur, type = 'sine', gainVal = 0.1) {
+  if (!soundEnabled) return;
+  initAudio();
+  if (!audioCtx) return;
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + dur);
+  } catch(e) {}
+}
+function soundRotate() { playTone(480, 0.08, 'triangle', 0.12); }
+function soundFixed() { playTone(240, 0.15, 'sine', 0.15); }
+function soundConnect() {
+  if (!soundEnabled) return;
+  [523.25, 659.25, 783.99].forEach((f, i) => setTimeout(() => playTone(f, 0.16, 'sine', 0.07), i * 40));
+}
+function soundHint() {
+  if (!soundEnabled) return;
+  playTone(659.25, 0.1, 'sine', 0.12);
+  setTimeout(() => playTone(880, 0.14, 'sine', 0.12), 60);
+}
+function soundVictory() {
+  if (!soundEnabled) return;
+  [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => setTimeout(() => playTone(f, 0.28, 'triangle', 0.16), i * 110));
+}
+
+function getCurrentExits(tile) {
+  const r = (tile.rotation % 4 + 4) % 4;
+  const b = tile.baseExits;
+  return [b[(0 - r + 4) % 4], b[(1 - r + 4) % 4], b[(2 - r + 4) % 4], b[(3 - r + 4) % 4]];
+}
+
+function isTileCorrect(tile) {
+  const cur = getCurrentExits(tile);
+  const tgt = tile.baseExits;
+  return cur[0] === tgt[0] && cur[1] === tgt[1] && cur[2] === tgt[2] && cur[3] === tgt[3];
+}
+
+function evaluateNetwork() {
+  const exits = grid.map(row => row.map(t => getCurrentExits(t)));
+  let deadEnds = 0;
+
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const [n, e, s, w] = exits[r][c];
+      if (n && (r === 0 || !exits[r - 1][c][2])) deadEnds++;
+      if (e && (c === COLS - 1 || !exits[r][c + 1][3])) deadEnds++;
+      if (s && (r === ROWS - 1 || !exits[r + 1][c][0])) deadEnds++;
+      if (w && (c === 0 || !exits[r][c - 1][1])) deadEnds++;
+    }
+  }
+
+  const connectedSet = new Set();
+  const queue = [[0, 0]];
+  connectedSet.add('0,0');
+
+  while (queue.length > 0) {
+    const [r, c] = queue.shift();
+    const [n, e, s, w] = exits[r][c];
+    if (n && r > 0 && exits[r - 1][c][2] && !connectedSet.has(`${r-1},${c}`)) {
+      connectedSet.add(`${r-1},${c}`);
+      queue.push([r - 1, c]);
+    }
+    if (e && c < COLS - 1 && exits[r][c + 1][3] && !connectedSet.has(`${r},${c+1}`)) {
+      connectedSet.add(`${r},${c+1}`);
+      queue.push([r, c + 1]);
+    }
+    if (s && r < ROWS - 1 && exits[r + 1][c][0] && !connectedSet.has(`${r+1},${c}`)) {
+      connectedSet.add(`${r+1},${c}`);
+      queue.push([r + 1, c]);
+    }
+    if (w && c > 0 && exits[r][c - 1][1] && !connectedSet.has(`${r},${c-1}`)) {
+      connectedSet.add(`${r},${c-1}`);
+      queue.push([r, c - 1]);
+    }
+  }
+
+  const total = ROWS * COLS;
+  const won = deadEnds === 0 && connectedSet.size === total;
+  return { connectedSet, deadEnds, isWon: won };
+}
+
+function initGrid() {
+  grid = [];
+  animAngles = {};
+  for (let r = 0; r < ROWS; r++) {
+    const row = [];
+    for (let c = 0; c < COLS; c++) {
+      const isFixed = (r === 0 && c === 0);
+      const rot = isFixed ? 0 : Math.floor(Math.random() * 3) + 1;
+      row.push({
+        row: r,
+        col: c,
+        baseExits: BASE_GRID_EXITS[r][c],
+        rotation: rot,
+        isFixed: isFixed,
+        scenery: SCENERY_TYPES[r][c]
+      });
+      animAngles[`${r},${c}`] = { cur: rot * Math.PI / 2, tgt: rot * Math.PI / 2 };
+    }
+    grid.push(row);
+  }
+
+  if (evaluateNetwork().isWon) {
+    grid[1][1].rotation = (grid[1][1].rotation + 1) % 4;
+    animAngles['1,1'].cur = grid[1][1].rotation * Math.PI / 2;
+    animAngles['1,1'].tgt = animAngles['1,1'].cur;
+  }
+  moveCount = 0;
+  isWon = false;
+  updateStats();
+}
+
+function resetGame() {
+  initGrid();
+  updateStats();
+}
+
+function rotateTile(r, c) {
+  if (isWon) return;
+  const t = grid[r][c];
+  if (t.isFixed) {
+    soundFixed();
+    openModal('modal-grandpa');
+    return;
+  }
+  if (showHints && isTileCorrect(t)) {
+    soundFixed();
+    return;
+  }
+
+  const prevConnected = evaluateNetwork().connectedSet.size;
+  t.rotation = (t.rotation + 1) % 4;
+  animAngles[`${r},${c}`].tgt += Math.PI / 2;
+  moveCount++;
+
+  soundRotate();
+  const res = evaluateNetwork();
+  if (res.connectedSet.size > prevConnected && !res.isWon) {
+    soundConnect();
+  }
+
+  updateStats();
+  if (res.isWon && !isWon) {
+    isWon = true;
+    soundVictory();
+    setTimeout(() => {
+      document.getElementById('victory-stats').innerText = `您以 ${moveCount} 步成功連通中興新村所有路網！`;
+      openModal('modal-victory');
+    }, 450);
+  }
+}
+
+function updateStats() {
+  const evalRes = evaluateNetwork();
+  const total = ROWS * COLS;
+  const connCount = evalRes.connectedSet.size;
+  const pct = Math.round((connCount / total) * 100);
+
+  document.getElementById('stat-connected').innerText = `${connCount}/${total}`;
+  document.getElementById('stat-percent').innerText = `(${pct}%)`;
+  document.getElementById('stat-moves').innerText = moveCount;
+
+  let correctCount = 0;
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (isTileCorrect(grid[r][c])) correctCount++;
+    }
+  }
+  document.getElementById('stat-locked-count').innerText = `${correctCount}/${total}`;
+}
+
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  const wrapper = document.getElementById('canvas-wrapper');
+  const maxW = wrapper.clientWidth - 32;
+  const maxH = wrapper.clientHeight - 32;
+  
+  const sizeByW = Math.floor(maxW / COLS);
+  const sizeByH = Math.floor(maxH / ROWS);
+  TILE_SIZE = Math.max(Math.min(sizeByW, sizeByH, 96), 48);
+  
+  canvas.width = COLS * TILE_SIZE;
+  canvas.height = ROWS * TILE_SIZE;
+}
+window.addEventListener('resize', resizeCanvas);
+
+function renderLoop(timeMs) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const evalRes = evaluateNetwork();
+  const connectedSet = evalRes.connectedSet;
+
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const tile = grid[r][c];
+      const anim = animAngles[`${r},${c}`];
+      if (anim) {
+        const diff = anim.tgt - anim.cur;
+        if (Math.abs(diff) > 0.005) {
+          anim.cur += diff * 0.28;
+        } else {
+          anim.cur = anim.tgt;
+        }
+      }
+
+      const isConnected = connectedSet.has(`${r},${c}`) || isWon;
+      const isHovered = hoveredCoord && hoveredCoord.r === r && hoveredCoord.c === c;
+      const isCorrect = isTileCorrect(tile);
+      const isLockedByHint = showHints && isCorrect && !isWon;
+
+      ctx.save();
+      const half = TILE_SIZE / 2;
+      ctx.translate(c * TILE_SIZE + half, r * TILE_SIZE + half);
+
+      // 1. 草坪基底
+      ctx.fillStyle = isConnected ? '#7fb85e' : '#6e9f54';
+      ctx.fillRect(-half, -half, TILE_SIZE, TILE_SIZE);
+
+      const seed = (r * 13 + c * 29) % 7;
+      ctx.fillStyle = isConnected ? '#94ca73' : '#5e8947';
+      ctx.fillRect(-half + 6 + (seed * 3) % 15, -half + 8 + (seed * 5) % 15, 3, 3);
+      ctx.fillRect(half - 12 - (seed * 4) % 15, half - 12 - (seed * 2) % 15, 3, 3);
+      if (seed % 2 === 0) {
+        ctx.fillStyle = '#fde047';
+        ctx.fillRect(-half + 10 + (seed * 7) % 20, half - 16, 2.5, 2.5);
+      }
+
+      // 2. 旋轉繪製路網與景物
+      ctx.save();
+      ctx.rotate(anim.cur);
+
+      drawStreets(ctx, half, tile.baseExits, isConnected);
+      drawScenery(ctx, half, tile.scenery, tile.baseExits);
+
+      if (tile.isFixed) {
+        drawGrandpaAvatar(ctx, half, timeMs);
+      }
+      ctx.restore();
+
+      // 3. 飄渺迷霧覆蓋層
+      if (!isConnected && !isWon) {
+        drawFogOverlay(ctx, half, r, c, timeMs);
+      }
+
+      // 4. 提示鎖定標示
+      if (isLockedByHint) {
+        ctx.strokeStyle = tile.isFixed ? '#f59e0b' : '#10b981';
+        ctx.lineWidth = 2.5;
+        ctx.strokeRect(-half + 1.5, -half + 1.5, TILE_SIZE - 3, TILE_SIZE - 3);
+
+        ctx.fillStyle = tile.isFixed ? 'rgba(245, 158, 11, 0.12)' : 'rgba(16, 185, 129, 0.12)';
+        ctx.fillRect(-half + 2, -half + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+
+        if (!tile.isFixed) {
+          const bx = half - 12;
+          const by = -half + 6;
+          ctx.fillStyle = '#059669';
+          ctx.beginPath();
+          ctx.arc(bx, by, 5.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 8px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('✓', bx, by + 0.5);
+        }
+      }
+
+      // 5. 懸停回饋
+      if (isHovered && !isWon) {
+        if (tile.isFixed) {
+          ctx.strokeStyle = '#fbbf24';
+          ctx.lineWidth = 2.5;
+          ctx.strokeRect(-half + 1.5, -half + 1.5, TILE_SIZE - 3, TILE_SIZE - 3);
+          drawBadge(ctx, half, '🔒 固定圖塊', '#fef08a');
+        } else if (isLockedByHint) {
+          ctx.strokeStyle = '#34d399';
+          ctx.lineWidth = 2.5;
+          ctx.strokeRect(-half + 1.5, -half + 1.5, TILE_SIZE - 3, TILE_SIZE - 3);
+          drawBadge(ctx, half, '🔒 正確方向(已鎖定)', '#86efac');
+        } else {
+          ctx.strokeStyle = showHints ? '#f59e0b' : '#60a5fa';
+          ctx.lineWidth = 2.5;
+          ctx.strokeRect(-half + 1.5, -half + 1.5, TILE_SIZE - 3, TILE_SIZE - 3);
+          if (showHints) {
+            drawBadge(ctx, half, '🔄 點擊旋轉對齊', '#fde047');
+          }
+        }
+      }
+
+      ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(-half, -half, TILE_SIZE, TILE_SIZE);
+
+      ctx.restore();
+    }
+  }
+
+  requestAnimationFrame(renderLoop);
+}
+
+// 繪製街道（含特色囊底路與路面標線）
+function drawStreets(ctx, half, exits, isConnected) {
+  const [n, e, s, w] = exits;
+  const roadWidth = half * 0.72;
+  const roadHalf = roadWidth / 2;
+  const curbOffset = 3;
+  const exitSum = n + e + s + w;
+  const isCulDeSac = exitSum === 1;
+
+  ctx.fillStyle = isConnected ? '#d6c8b4' : '#b2a492';
+
+  if (isCulDeSac) {
+    if (n) ctx.fillRect(-roadHalf - curbOffset, -half, roadWidth + curbOffset * 2, half);
+    if (e) ctx.fillRect(0, -roadHalf - curbOffset, half, roadWidth + curbOffset * 2);
+    if (s) ctx.fillRect(-roadHalf - curbOffset, 0, roadWidth + curbOffset * 2, half);
+    if (w) ctx.fillRect(-half, -roadHalf - curbOffset, half, roadWidth + curbOffset * 2);
+
+    const circleR = roadHalf + curbOffset + 4;
+    ctx.beginPath();
+    ctx.arc(0, 0, circleR, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = isConnected ? '#f4ece1' : '#dfd4c4';
+    if (n) ctx.fillRect(-roadHalf, -half, roadWidth, half);
+    if (e) ctx.fillRect(0, -roadHalf, half, roadWidth);
+    if (s) ctx.fillRect(-roadHalf, 0, roadWidth, half);
+    if (w) ctx.fillRect(-half, -roadHalf, half, roadWidth);
+
+    ctx.beginPath();
+    ctx.arc(0, 0, roadHalf + 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 囊底路中央圓島綠島與植栽
+    ctx.fillStyle = isConnected ? '#659c47' : '#57843d';
+    ctx.beginPath();
+    ctx.arc(0, 0, roadHalf * 0.44, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = isConnected ? '#3e893e' : '#2f6930';
+    ctx.beginPath();
+    ctx.arc(0, 0, roadHalf * 0.28, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 道路中心引導虛線
+    ctx.fillStyle = isConnected ? '#e2a93b' : '#baa892';
+    const dashW = 2.5, dashL = 6;
+    if (n) ctx.fillRect(-dashW / 2, -half + 5, dashW, dashL);
+    if (s) ctx.fillRect(-dashW / 2, half - 11, dashW, dashL);
+    if (e) ctx.fillRect(half - 11, -dashW / 2, dashL, dashW);
+    if (w) ctx.fillRect(-half + 5, -dashW / 2, dashL, dashW);
+  } else {
+    // 雙向/十字/三叉/轉角道路
+    ctx.fillRect(-roadHalf - curbOffset, -roadHalf - curbOffset, roadWidth + curbOffset * 2, roadWidth + curbOffset * 2);
+    if (n) ctx.fillRect(-roadHalf - curbOffset, -half, roadWidth + curbOffset * 2, half);
+    if (e) ctx.fillRect(0, -roadHalf - curbOffset, half, roadWidth + curbOffset * 2);
+    if (s) ctx.fillRect(-roadHalf - curbOffset, 0, roadWidth + curbOffset * 2, half);
+    if (w) ctx.fillRect(-half, -roadHalf - curbOffset, half, roadWidth + curbOffset * 2);
+
+    ctx.fillStyle = isConnected ? '#f4ece1' : '#dfd4c4';
+    ctx.fillRect(-roadHalf, -roadHalf, roadWidth, roadWidth);
+    if (n) ctx.fillRect(-roadHalf, -half, roadWidth, half);
+    if (e) ctx.fillRect(0, -roadHalf, half, roadWidth);
+    if (s) ctx.fillRect(-roadHalf, 0, roadWidth, half);
+    if (w) ctx.fillRect(-half, -roadHalf, half, roadWidth);
+
+    ctx.fillStyle = isConnected ? '#e2a93b' : '#baa892';
+    const dashW = 3, dashL = 7;
+    if (n) { ctx.fillRect(-dashW / 2, -half + 4, dashW, dashL); ctx.fillRect(-dashW / 2, -half + 18, dashW, dashL); }
+    if (s) { ctx.fillRect(-dashW / 2, half - 11, dashW, dashL); ctx.fillRect(-dashW / 2, half - 25, dashW, dashL); }
+    if (e) { ctx.fillRect(half - 11, -dashW / 2, dashL, dashW); ctx.fillRect(half - 25, -dashW / 2, dashL, dashW); }
+    if (w) { ctx.fillRect(-half + 4, -dashW / 2, dashL, dashW); ctx.fillRect(-half + 18, -dashW / 2, dashL, dashW); }
+  }
+}
+
+// 繪製紅瓦厝、綠樹與路燈
+function drawScenery(ctx, half, type, exits) {
+  const [n, e, s, w] = exits;
+  if (type === 'cul_de_sac') {
+    if (!n && !w) drawRedRoofHouse(ctx, -half + 6, -half + 6, 20, 15);
+    if (!s && !e) drawTree(ctx, half - 14, half - 14, 11);
+    if (!n && !e) drawTree(ctx, half - 14, -half + 12, 10);
+    if (!s && !w) drawTree(ctx, -half + 12, half - 14, 10);
+  } else if (type === 'houses_cluster') {
+    if (!n && !w) drawRedRoofHouse(ctx, -half + 6, -half + 6, 22, 16);
+    if (!s && !e) drawRedRoofHouse(ctx, half - 28, half - 22, 22, 16);
+    if (!n && !e) drawTree(ctx, half - 14, -half + 12, 11);
+    if (!s && !w) drawTree(ctx, -half + 12, half - 14, 10);
+  } else if (type === 'single_house') {
+    if (!s && !w) {
+      drawRedRoofHouse(ctx, -half + 6, half - 24, 24, 17);
+      drawTree(ctx, half - 16, -half + 12, 11);
+    } else {
+      drawRedRoofHouse(ctx, half - 28, -half + 6, 22, 16);
+      drawTree(ctx, -half + 12, half - 14, 11);
+    }
+  } else if (type === 'park') {
+    if (!n && !w) drawTree(ctx, -half + 12, -half + 12, 13);
+    if (!s && !e) drawTree(ctx, half - 14, half - 14, 12);
+    if (!n && !e) drawTree(ctx, half - 14, -half + 12, 11);
+    if (!s && !w) drawTree(ctx, -half + 12, half - 14, 11);
+  } else if (type === 'avenue') {
+    if (!n && !w) drawTree(ctx, -half + 12, -half + 12, 11);
+    if (!s && !e) drawRedRoofHouse(ctx, half - 26, half - 20, 20, 15);
+    if (!n && !e) drawTree(ctx, half - 14, -half + 12, 10);
+    if (!s && !w) drawTree(ctx, -half + 12, half - 14, 10);
+  } else {
+    if (!n && !w) drawTree(ctx, -half + 12, -half + 12, 11);
+    if (!s && !e) drawTree(ctx, half - 14, half - 14, 10);
+    if (!n && !e) drawLampPost(ctx, half - 12, -half + 14);
+    if (!s && !w) drawRedRoofHouse(ctx, -half + 6, half - 22, 20, 15);
+  }
+}
+
+function drawRedRoofHouse(ctx, x, y, w, h) {
+  ctx.fillStyle = '#b93e26';
+  ctx.beginPath();
+  ctx.moveTo(x + w / 2, y);
+  ctx.lineTo(x + w, y + h * 0.55);
+  ctx.lineTo(x, y + h * 0.55);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = '#8f2916';
+  ctx.fillRect(x + 2, y + h * 0.5, w - 4, 2);
+
+  ctx.fillStyle = '#f8f4ec';
+  ctx.fillRect(x + 2, y + h * 0.55, w - 4, h * 0.45);
+
+  ctx.fillStyle = '#3b82f6';
+  ctx.fillRect(x + 4, y + h * 0.65, 5, 4);
+  ctx.fillRect(x + w - 9, y + h * 0.65, 5, 4);
+
+  ctx.fillStyle = '#92400e';
+  ctx.fillRect(x + w / 2 - 2, y + h * 0.68, 4, 6);
+}
+
+function drawTree(ctx, cx, cy, r) {
+  ctx.fillStyle = '#78350f';
+  ctx.fillRect(cx - 2, cy + r - 3, 4, 7);
+
+  ctx.fillStyle = '#265828';
+  ctx.beginPath();
+  ctx.arc(cx, cy + 2, r, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#3e893e';
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#65a754';
+  ctx.beginPath();
+  ctx.arc(cx - 2, cy - 2, r * 0.55, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawLampPost(ctx, x, y) {
+  ctx.fillStyle = '#374151';
+  ctx.fillRect(x, y, 2, 10);
+  ctx.fillStyle = '#fde047';
+  ctx.fillRect(x - 2, y - 2, 6, 4);
+}
+
+// 繪製白髮老爺爺起點頭像 (藍綠色襯衫、和藹微笑眼神、無眼鏡無鬍子)
+function drawGrandpaAvatar(ctx, half, timeMs) {
+  ctx.save();
+  const pulse = Math.sin(timeMs / 300) * 1.5;
+  ctx.fillStyle = 'rgba(234, 179, 8, 0.35)';
+  ctx.beginPath();
+  ctx.arc(0, 0, 20 + pulse, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#fbbf24';
+  ctx.beginPath();
+  ctx.arc(0, 0, 18, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#fef3c7';
+  ctx.beginPath();
+  ctx.arc(0, 0, 16, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 白髮
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(-10, -11, 20, 15);
+  ctx.fillRect(-11, -8, 22, 12);
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(-8, -11, 16, 4);
+
+  // 臉蛋
+  ctx.fillStyle = '#fed7aa';
+  ctx.fillRect(-7, -7, 14, 13);
+
+  // 慈祥雙眼
+  ctx.fillStyle = '#1e293b';
+  ctx.fillRect(-4, -4, 2, 2.5);
+  ctx.fillRect(3, -4, 2, 2.5);
+
+  // 白眉
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(-5, -7, 3.5, 1.5);
+  ctx.fillRect(2.5, -7, 3.5, 1.5);
+
+  // 蘋果肌
+  ctx.fillStyle = 'rgba(251, 113, 133, 0.45)';
+  ctx.fillRect(-6, -1, 2.5, 2);
+  ctx.fillRect(4, -1, 2.5, 2);
+
+  // 微笑唇角
+  ctx.fillStyle = '#be123c';
+  ctx.fillRect(-2, 2, 4, 1.5);
+
+  // 藍綠色襯衫 (teal-600)
+  ctx.fillStyle = '#0d9488';
+  ctx.fillRect(-9, 7, 18, 8);
+
+  ctx.fillStyle = '#14b8a6';
+  ctx.beginPath();
+  ctx.moveTo(-5, 7);
+  ctx.lineTo(0, 11);
+  ctx.lineTo(5, 7);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = '#f0fdfa';
+  ctx.fillRect(-1, 8, 2, 2);
+  ctx.fillRect(-1, 12, 2, 2);
+
+  // 小鎖頭
+  ctx.fillStyle = '#d97706';
+  ctx.fillRect(10, -15, 6, 6);
+  ctx.strokeStyle = '#78350f';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.arc(13, -15, 2.2, Math.PI, 0);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function drawFogOverlay(ctx, half, r, c, timeMs) {
+  ctx.save();
+  const speed = timeMs / 1400;
+  const driftX = Math.sin(speed + r * 1.5) * 6;
+  const driftY = Math.cos(speed + c * 1.5) * 6;
+
+  ctx.fillStyle = 'rgba(226, 232, 240, 0.45)';
+  ctx.fillRect(-half, -half, half * 2, half * 2);
+
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.28)';
+  ctx.beginPath();
+  ctx.arc(-half * 0.3 + driftX, -half * 0.3 + driftY, half * 0.5, 0, Math.PI * 2);
+  ctx.arc(half * 0.3 - driftX, half * 0.3 - driftY, half * 0.55, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawBadge(ctx, half, text, color) {
+  ctx.save();
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.82)';
+  ctx.fillRect(-half + 3, half - 18, half * 2 - 6, 15);
+  ctx.fillStyle = color;
+  ctx.font = 'bold 9px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, 0, half - 10.5);
+  ctx.restore();
+}
+
+// 點擊與游標互動
+canvas.addEventListener('pointerdown', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const c = Math.floor(x / TILE_SIZE);
+  const r = Math.floor(y / TILE_SIZE);
+  if (r >= 0 && r < ROWS && c >= 0 && c < COLS) rotateTile(r, c);
+});
+
+canvas.addEventListener('pointermove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const c = Math.floor(x / TILE_SIZE);
+  const r = Math.floor(y / TILE_SIZE);
+  if (r >= 0 && r < ROWS && c >= 0 && c < COLS) {
+    hoveredCoord = { r, c };
+    const t = grid[r][c];
+    if (t.isFixed || (showHints && isTileCorrect(t))) {
+      canvas.style.cursor = 'not-allowed';
+    } else {
+      canvas.style.cursor = 'pointer';
+    }
+  } else {
+    hoveredCoord = null;
+    canvas.style.cursor = 'default';
+  }
+});
+
+canvas.addEventListener('pointerleave', () => {
+  hoveredCoord = null;
+  canvas.style.cursor = 'default';
+});
+
+document.getElementById('btn-reset').addEventListener('click', resetGame);
+document.getElementById('btn-help').addEventListener('click', () => openModal('modal-help'));
+
+document.getElementById('btn-hint').addEventListener('click', () => {
+  showHints = !showHints;
+  const btn = document.getElementById('btn-hint');
+  const pill = document.getElementById('stat-hint-pill');
+  if (showHints) {
+    soundHint();
+    btn.classList.add('btn-hint-active');
+    document.getElementById('hint-text').innerText = '提示中';
+    pill.style.display = 'flex';
+  } else {
+    btn.classList.remove('btn-hint-active');
+    document.getElementById('hint-text').innerText = '提示';
+    pill.style.display = 'none';
+  }
+  updateStats();
+});
+
+document.getElementById('btn-sound').addEventListener('click', () => {
+  soundEnabled = !soundEnabled;
+  document.getElementById('btn-sound').innerText = soundEnabled ? '🔊' : '🔇';
+});
+
+function openModal(id) {
+  document.getElementById(id).classList.add('active');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+document.querySelectorAll('.modal-overlay').forEach(modal => {
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.classList.remove('active');
+  });
+});
+
+resizeCanvas();
+initGrid();
+requestAnimationFrame(renderLoop);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,226 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595 842" width="595" height="842">
+  <defs>
+    <!-- Card Gradients -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d4a34b" />
+      <stop offset="50%" stop-color="#b8832e" />
+      <stop offset="100%" stop-color="#9a6b20" />
+    </linearGradient>
+    <linearGradient id="sunburstGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="60%" stop-color="#eab308" />
+      <stop offset="100%" stop-color="#ca8a04" />
+    </linearGradient>
+    <radialGradient id="auraGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fef08a" stop-opacity="0.6" />
+      <stop offset="70%" stop-color="#eab308" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#ca8a04" stop-opacity="0" />
+    </radialGradient>
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.15" />
+    </filter>
+  </defs>
+
+  <!-- Clean Card Base -->
+  <rect width="595" height="842" fill="#ffffff" rx="12" />
+  
+  <!-- Outer Gold Decorative Borders -->
+  <g stroke="url(#goldGrad)" fill="none">
+    <!-- Outermost Frame -->
+    <rect x="65" y="65" width="465" height="712" stroke-width="3" />
+    <rect x="75" y="75" width="445" height="692" stroke-width="1.5" />
+    
+    <!-- Corner Square Ornaments -->
+    <rect x="60" y="760" width="10" height="10" fill="#b8832e" />
+    <rect x="525" y="760" width="10" height="10" fill="#b8832e" />
+    <line x1="65" y1="765" x2="530" y2="765" stroke-width="2" />
+    
+    <!-- Inner Illustration Frame -->
+    <rect x="96" y="145" width="403" height="550" stroke-width="2.5" />
+  </g>
+
+  <!-- Top-Left Circle: Compass Star & "北" (North) -->
+  <g transform="translate(76, 96)">
+    <circle cx="0" cy="0" r="48" fill="url(#goldGrad)" stroke="#ffffff" stroke-width="2" />
+    <circle cx="0" cy="0" r="44" fill="none" stroke="#ffffff" stroke-width="1.5" />
+    
+    <!-- 8-Point Compass Star -->
+    <g fill="#ffffff">
+      <!-- Main North Point -->
+      <polygon points="0,-36 4,-8 0,0 -4,-8" />
+      <!-- South Point -->
+      <polygon points="0,16 3,5 0,0 -3,5" />
+      <!-- East Point -->
+      <polygon points="26,0 6,3 0,0 6,-3" />
+      <!-- West Point -->
+      <polygon points="-26,0 -6,3 0,0 -6,-3" />
+      <!-- Diagonal Points -->
+      <polygon points="14,-14 4,-3 0,0 3,-4" />
+      <polygon points="-14,-14 -4,-3 0,0 -3,-4" />
+      <polygon points="12,12 3,3 0,0 3,4" />
+      <polygon points="-12,12 -3,3 0,0 -3,4" />
+    </g>
+    <!-- Character 北 -->
+    <text x="0" y="32" text-anchor="middle" font-family="'Noto Serif TC', 'Songti TC', serif" font-weight="bold" font-size="16" fill="#ffffff">北</text>
+  </g>
+
+  <!-- Top-Right Circle: I-Ching Hexagram 24 (地雷復) -->
+  <g transform="translate(518, 96)">
+    <circle cx="0" cy="0" r="48" fill="url(#goldGrad)" stroke="#ffffff" stroke-width="2" />
+    <circle cx="0" cy="0" r="44" fill="none" stroke="#ffffff" stroke-width="1.5" />
+    
+    <!-- Hexagram Lines: 5 Yin lines (broken) above 1 Yang line (solid) -->
+    <!-- Line 6 (top): Yin -->
+    <line x1="-28" y1="-28" x2="-6" y2="-28" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" />
+    <line x1="6" y1="-28" x2="28" y2="-28" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" />
+    <!-- Line 5: Yin -->
+    <line x1="-28" y1="-17" x2="-6" y2="-17" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" />
+    <line x1="6" y1="-17" x2="28" y2="-17" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" />
+    <!-- Line 4: Yin -->
+    <line x1="-28" y1="-6" x2="-6" y2="-6" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" />
+    <line x1="6" y1="-6" x2="28" y2="-6" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" />
+    <!-- Line 3: Yin -->
+    <line x1="-28" y1="5" x2="-6" y2="5" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" />
+    <line x1="6" y1="5" x2="28" y2="5" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" />
+    <!-- Line 2: Yin -->
+    <line x1="-28" y1="16" x2="-6" y2="16" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" />
+    <line x1="6" y1="16" x2="28" y2="16" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" />
+    <!-- Line 1 (bottom): Yang (solid) -->
+    <line x1="-28" y1="27" x2="28" y2="27" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round" />
+  </g>
+
+  <!-- Center Artwork: The Mystical Stone Wolf / Guardian Beast -->
+  <g transform="translate(297, 435)">
+    <!-- Aura Glow Behind Neck -->
+    <circle cx="0" cy="-10" r="140" fill="url(#auraGlow)" />
+
+    <!-- Stone Beast Body (Lower Torso & Paws) -->
+    <!-- Tail -->
+    <path d="M 60,80 Q 95,90 120,40 Q 130,20 125,50 Q 115,100 70,120 Z" fill="#b3aba0" stroke="#4a4238" stroke-width="2.5" />
+    
+    <!-- Back & Torso -->
+    <path d="M -70,30 L -90,90 L -80,180 L -30,200 L 0,205 L 30,200 L 80,180 L 85,85 L 65,30 Z" 
+          fill="#cdc6ba" stroke="#4a4238" stroke-width="2.5" />
+
+    <!-- Stone Paws Front -->
+    <!-- Left Paw -->
+    <path d="M -70,165 L -75,205 L -45,210 L -15,205 L -20,165 Z" fill="#b9b1a5" stroke="#4a4238" stroke-width="2.5" />
+    <line x1="-55" y1="185" x2="-55" y2="208" stroke="#4a4238" stroke-width="2" />
+    <line x1="-35" y1="185" x2="-35" y2="208" stroke="#4a4238" stroke-width="2" />
+    
+    <!-- Right Paw -->
+    <path d="M 15,165 L 15,205 L 45,210 L 75,205 L 70,165 Z" fill="#c4bcb0" stroke="#4a4238" stroke-width="2.5" />
+    <line x1="35" y1="185" x2="35" y2="208" stroke="#4a4238" stroke-width="2" />
+    <line x1="55" y1="185" x2="55" y2="208" stroke="#4a4238" stroke-width="2" />
+
+    <!-- Beast Ears -->
+    <!-- Left Ear -->
+    <path d="M -75,-80 L -70,-165 L -40,-180 L -25,-120 Z" fill="#cac2b7" stroke="#4a4238" stroke-width="2.5" />
+    <path d="M -60,-85 L -55,-155 L -40,-165 L -35,-120 Z" fill="#b3a99b" stroke="#4a4238" stroke-width="1.5" />
+    <!-- Right Ear -->
+    <path d="M 75,-80 L 70,-165 L 40,-180 L 25,-120 Z" fill="#d8d1c6" stroke="#4a4238" stroke-width="2.5" />
+    <path d="M 60,-85 L 55,-155 L 40,-165 L 35,-120 Z" fill="#b3a99b" stroke="#4a4238" stroke-width="1.5" />
+
+    <!-- Stone Head Facets -->
+    <path d="M -70,-80 L -25,-125 L 25,-125 L 70,-80 L 60,-15 L 0,25 L -60,-15 Z" fill="#dbd5cb" stroke="#4a4238" stroke-width="2.5" />
+    
+    <!-- Forehead Facets -->
+    <polygon points="-25,-125 0,-135 25,-125 0,-85" fill="#e5dfd6" stroke="#4a4238" stroke-width="1.5" />
+    <polygon points="-25,-125 -70,-80 -35,-65 0,-85" fill="#c3bcb1" stroke="#4a4238" stroke-width="1.5" />
+    <polygon points="25,-125 70,-80 35,-65 0,-85" fill="#e8e2d9" stroke="#4a4238" stroke-width="1.5" />
+
+    <!-- Snout & Nose -->
+    <polygon points="0,-85 -25,-25 0,-10 25,-25" fill="#cdc6ba" stroke="#4a4238" stroke-width="2" />
+    <!-- Dark Stone Nose -->
+    <polygon points="-14,-22 0,-30 14,-22 8,-12 -8,-12" fill="#4a4238" />
+
+    <!-- Piercing Yellow Lightning Eyes -->
+    <!-- Left Eye -->
+    <polygon points="-48,-55 -28,-65 -22,-50 -38,-42" fill="#ca8a04" stroke="#4a4238" stroke-width="1.5" />
+    <!-- Yellow Flash Markings -->
+    <path d="M -56,-70 L -46,-45 L -26,-58 L -36,-76 Z" fill="#facc15" opacity="0.95" />
+    <circle cx="-33" cy="-54" r="5" fill="#1e1b18" />
+    <circle cx="-35" cy="-56" r="1.8" fill="#ffffff" />
+
+    <!-- Right Eye -->
+    <polygon points="48,-55 28,-65 22,-50 38,-42" fill="#ca8a04" stroke="#4a4238" stroke-width="1.5" />
+    <!-- Yellow Flash Markings -->
+    <path d="M 56,-70 L 46,-45 L 26,-58 L 36,-76 Z" fill="#facc15" opacity="0.95" />
+    <circle cx="33" cy="-54" r="5" fill="#1e1b18" />
+    <circle cx="31" cy="-56" r="1.8" fill="#ffffff" />
+
+    <!-- Golden Sunburst Collar (Radiating Spikes) -->
+    <g filter="url(#cardShadow)">
+      <polygon points="
+        0,-15 
+        28,-3 
+        75,-48 
+        55,10 
+        145,22 
+        68,48 
+        115,95 
+        45,72 
+        50,135 
+        15,82 
+        0,140 
+        -15,82 
+        -50,135 
+        -45,72 
+        -115,95 
+        -68,48 
+        -145,22 
+        -55,10 
+        -75,-48 
+        -28,-3
+      " fill="url(#sunburstGrad)" stroke="#9a6b20" stroke-width="2.5" />
+      
+      <!-- Inner Sunburst Shading -->
+      <polygon points="
+        0,-5 
+        20,5 
+        50,-20 
+        40,15 
+        95,22 
+        48,40 
+        75,70 
+        30,55 
+        32,95 
+        10,60 
+        0,98 
+        -10,60 
+        -32,95 
+        -30,55 
+        -75,70 
+        -48,40 
+        -95,22 
+        -40,15 
+        -50,-20 
+        -20,5
+      " fill="#fef08a" opacity="0.65" />
+    </g>
+  </g>
+
+  <!-- Bottom Title Diamonds: "地" "雷" "復" -->
+  <g transform="translate(297, 765)">
+    <!-- Left Diamond: 地 -->
+    <g transform="translate(-80, 0)">
+      <rect x="-32" y="-32" width="64" height="64" rx="4" transform="rotate(45)" fill="url(#goldGrad)" stroke="#ffffff" stroke-width="2.5" filter="url(#cardShadow)" />
+      <rect x="-26" y="-26" width="52" height="52" rx="2" transform="rotate(45)" fill="none" stroke="#fef08a" stroke-width="1.2" />
+      <text x="0" y="11" text-anchor="middle" font-family="'Noto Serif TC', 'Kaiti TC', 'STKaiti', serif" font-weight="900" font-size="34" fill="#ffffff">地</text>
+    </g>
+
+    <!-- Center Diamond: 雷 -->
+    <g transform="translate(0, 0)">
+      <rect x="-34" y="-34" width="68" height="68" rx="4" transform="rotate(45)" fill="url(#goldGrad)" stroke="#ffffff" stroke-width="2.5" filter="url(#cardShadow)" />
+      <rect x="-28" y="-28" width="56" height="56" rx="2" transform="rotate(45)" fill="none" stroke="#fef08a" stroke-width="1.2" />
+      <text x="0" y="12" text-anchor="middle" font-family="'Noto Serif TC', 'Kaiti TC', 'STKaiti', serif" font-weight="900" font-size="36" fill="#ffffff">雷</text>
+    </g>
+
+    <!-- Right Diamond: 復 -->
+    <g transform="translate(80, 0)">
+      <rect x="-32" y="-32" width="64" height="64" rx="4" transform="rotate(45)" fill="url(#goldGrad)" stroke="#ffffff" stroke-width="2.5" filter="url(#cardShadow)" />
+      <rect x="-26" y="-26" width="52" height="52" rx="2" transform="rotate(45)" fill="none" stroke="#fef08a" stroke-width="1.2" />
+      <text x="0" y="11" text-anchor="middle" font-family="'Noto Serif TC', 'Kaiti TC', 'STKaiti', serif" font-weight="900" font-size="34" fill="#ffffff">復</text>
+    </g>
+  </g>
+</svg>

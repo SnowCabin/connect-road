@@ -1,0 +1,6 @@
+{
+  "name": "中興新村路網拼圖 - 驅散迷霧",
+  "description": "中興新村6*4像素風街道接水管小遊戲，接通路網與囊底路驅散迷霧尋找地雷復卦靈",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
