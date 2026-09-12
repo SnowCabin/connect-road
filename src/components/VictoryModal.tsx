@@ -16,8 +16,11 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
   timeSpentSec,
   onPlayAgain,
 }) => {
-  // 自動適配 GitHub Pages 子路徑，並依序嘗試載入候選圖檔
+  // 自動適配 GitHub Pages 子路徑，並依序嘗試載入候選圖檔（優先使用剪影版本）
   const candidateUrls = [
+    getAssetUrl('地雷復-剪影-01.png'),
+    getAssetUrl(encodeURI('地雷復-剪影-01.png')),
+    getAssetUrl('地雷復-剪影-01.jpg'),
     getAssetUrl('地雷復-01.png'),
     getAssetUrl(encodeURI('地雷復-01.png')),
     getAssetUrl('assets/dileifu.png'),

@@ -24,9 +24,9 @@ export const getAssetUrl = (path: string): string => {
 };
 
 export const GAME_CONFIG = {
-  // 過關圖片預設路徑 (會自動搭配 GitHub Pages /connect-road/ 子目錄)
-  VICTORY_IMAGE_URL: '地雷復-01.png',
-  VICTORY_IMAGE_FALLBACK: 'assets/dileifu.svg',
+  // 過關圖片預設路徑 (優先使用剪影版本，若無則降級回原本的地雷復圖檔)
+  VICTORY_IMAGE_URL: '地雷復-剪影-01.png',
+  VICTORY_IMAGE_FALLBACK: '地雷復-01.png',
 
   // 過關標題文字（指定規格）
   VICTORY_TITLE: '成功驅散迷霧，卦靈現身',
