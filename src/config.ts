@@ -12,13 +12,21 @@
  * =========================================================================
  */
 
+export const getAssetUrl = (path: string): string => {
+  if (!path) return '';
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
+    return path;
+  }
+  const base = import.meta.env.BASE_URL || './';
+  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  const cleanBase = base.endsWith('/') ? base : `${base}/`;
+  return `${cleanBase}${cleanPath}`;
+};
+
 export const GAME_CONFIG = {
-  // =========================================================================
-  // 【過關圖片來源】可以在此修改圖片路徑或網址：
-  // 預設使用內建高解析「地雷復」卡片向量圖（public/assets/dileifu.svg）
-  // 您可以改為例如：VICTORY_IMAGE_URL: '/地雷復-01.png'
-  // =========================================================================
-  VICTORY_IMAGE_URL: '/assets/dileifu.svg',
+  // 過關圖片預設路徑 (會自動搭配 GitHub Pages /connect-road/ 子目錄)
+  VICTORY_IMAGE_URL: '地雷復-01.png',
+  VICTORY_IMAGE_FALLBACK: 'assets/dileifu.svg',
 
   // 過關標題文字（指定規格）
   VICTORY_TITLE: '成功驅散迷霧，卦靈現身',

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sparkles, Camera, RotateCcw, Download, Settings2, ExternalLink } from 'lucide-react';
-import { GAME_CONFIG } from '../config';
+import { Sparkles, Camera, RotateCcw, Download } from 'lucide-react';
+import { GAME_CONFIG, getAssetUrl } from '../config';
 
 interface VictoryModalProps {
   isOpen: boolean;
@@ -16,24 +16,30 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
   timeSpentSec,
   onPlayAgain,
 }) => {
-  // 支援即時在 UI 預覽自訂圖片，並在下方提供修改程式碼說明
-  const [customImageUrl, setCustomImageUrl] = useState<string>(GAME_CONFIG.VICTORY_IMAGE_URL);
-  const [showConfigHelper, setShowConfigHelper] = useState<boolean>(false);
-  const [tempUrlInput, setTempUrlInput] = useState<string>('');
+  // 自動適配 GitHub Pages 子路徑，並依序嘗試載入候選圖檔
+  const candidateUrls = [
+    getAssetUrl('地雷復-01.png'),
+    getAssetUrl(encodeURI('地雷復-01.png')),
+    getAssetUrl('assets/dileifu.png'),
+    getAssetUrl('assets/dileifu.svg'),
+  ];
+
+  const [currentUrlIndex, setCurrentUrlIndex] = useState<number>(0);
 
   if (!isOpen) return null;
+
+  const currentImageUrl = candidateUrls[currentUrlIndex] || getAssetUrl(GAME_CONFIG.VICTORY_IMAGE_FALLBACK);
+
+  const handleImageError = () => {
+    if (currentUrlIndex < candidateUrls.length - 1) {
+      setCurrentUrlIndex(prev => prev + 1);
+    }
+  };
 
   const formatTime = (sec: number) => {
     const m = Math.floor(sec / 60);
     const s = sec % 60;
     return `${m > 0 ? `${m}分` : ''}${s}秒`;
-  };
-
-  const handleApplyCustomUrl = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (tempUrlInput.trim()) {
-      setCustomImageUrl(tempUrlInput.trim());
-    }
   };
 
   return (
@@ -94,8 +100,9 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
             className="relative group bg-white rounded-xl p-2 sm:p-2.5 shadow-2xl border-4 border-amber-400/80 max-w-[280px] sm:max-w-[310px] w-full transition-transform hover:scale-[1.01]"
           >
             <img
-              src={customImageUrl}
+              src={currentImageUrl}
               alt="地雷復 卦靈圖"
+              onError={handleImageError}
               className="w-full h-auto object-contain rounded-lg shadow-sm select-none"
               id="dileifu-victory-image"
             />
@@ -112,7 +119,7 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
             </div>
           </div>
 
-          {/* 操作按鈕群 */}
+          {/* 操作按鈕群（已移除開發者設定按鈕，保護隱私） */}
           <div className="w-full flex items-center justify-center gap-3 mt-4">
             <button
               onClick={onPlayAgain}
@@ -124,65 +131,18 @@ export const VictoryModal: React.FC<VictoryModalProps> = ({
             </button>
 
             <a
-              href={customImageUrl}
+              href={currentImageUrl}
               download="地雷復-卦靈圖.png"
               target="_blank"
               rel="noreferrer"
-              className="py-2.5 px-3 bg-stone-800 hover:bg-stone-700 text-amber-200 border border-amber-500/30 font-medium rounded-xl shadow transition-all active:scale-95 flex items-center justify-center gap-1.5 text-xs sm:text-sm"
+              className="py-2.5 px-4 bg-stone-800 hover:bg-stone-700 text-amber-200 border border-amber-500/30 font-medium rounded-xl shadow transition-all active:scale-95 flex items-center justify-center gap-1.5 text-xs sm:text-sm"
               title="另存圖片"
               id="victory-download-btn"
             >
               <Download className="w-4 h-4" />
               <span>另存圖檔</span>
             </a>
-
-            <button
-              onClick={() => setShowConfigHelper(!showConfigHelper)}
-              className="p-2.5 bg-stone-800/80 hover:bg-stone-700 text-amber-300/80 hover:text-amber-200 border border-amber-500/20 rounded-xl transition-all"
-              title="替換圖片設定說明"
-              id="victory-config-toggle-btn"
-            >
-              <Settings2 className="w-4 h-4" />
-            </button>
           </div>
-
-          {/* 圖片更換說明與即時網址預覽 (依使用者備註需求) */}
-          {showConfigHelper && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="w-full mt-3 p-3 bg-stone-950/80 rounded-xl border border-amber-500/30 text-left text-xs text-stone-300 space-y-2"
-              id="image-config-helper-box"
-            >
-              <div className="font-bold text-amber-300 flex items-center gap-1">
-                <Settings2 className="w-3.5 h-3.5" />
-                <span>如何修改圖片來源 (開發者設定)：</span>
-              </div>
-              <p className="leading-relaxed">
-                1. 程式碼檔案：在 <code className="bg-stone-800 text-amber-300 px-1 py-0.5 rounded">src/config.ts</code> 中已為您備註 <code className="text-amber-300">VICTORY_IMAGE_URL</code>，修改該變數即可換圖。
-              </p>
-              <p className="leading-relaxed">
-                2. 本地圖檔：可將您電腦中的 <code className="bg-stone-800 text-amber-300 px-1 py-0.5 rounded">地雷復-01.png</code> 放入專案的 <code className="bg-stone-800 text-amber-300 px-1 py-0.5 rounded">public/</code> 資料夾，並將設定改為 <code className="text-amber-300">'/地雷復-01.png'</code>。
-              </p>
-              {/* 現場快速測試其他圖片網址 */}
-              <form onSubmit={handleApplyCustomUrl} className="pt-1 flex gap-2">
-                <input
-                  type="text"
-                  placeholder="輸入線上圖片網址即時預覽..."
-                  value={tempUrlInput}
-                  onChange={(e) => setTempUrlInput(e.target.value)}
-                  className="flex-1 bg-stone-900 border border-stone-700 rounded-lg px-2.5 py-1 text-xs text-stone-100 placeholder-stone-500 focus:outline-none focus:border-amber-400"
-                />
-                <button
-                  type="submit"
-                  className="px-3 py-1 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-bold shrink-0"
-                >
-                  測試套用
-                </button>
-              </form>
-            </motion.div>
-          )}
         </motion.div>
       </div>
     </AnimatePresence>
